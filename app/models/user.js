@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const post = require('post')
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -10,6 +11,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  posts: [post],
   token: String
 }, {
   timestamps: true,
