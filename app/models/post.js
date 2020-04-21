@@ -11,12 +11,17 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  comments: [comment.schema]
+  comments: [comment.schema],
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  }
 }, {
   timestamps: true
 })
 
 module.exports = {
-   model: mongoose.model('Post', postSchema),
-   schema: postSchema
+  model: mongoose.model('Post', postSchema),
+  schema: postSchema
 }
