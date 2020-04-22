@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for examples
 const Post = require('../models/post').model
+const User = require('../models/user')
 
 const customErrors = require('../../lib/custom_errors')
 
@@ -20,7 +21,7 @@ const router = express.Router()
 // INDEX
 // GET /posts
 router.get('/posts', (req, res, next) => {
-  Post.find()
+  Post.find().populate('owner', '-token -posts -__v -createdAt -updatedAt')
     .then(posts => {
       return posts.map(post => post.toObject())
     })
@@ -32,7 +33,7 @@ router.get('/posts', (req, res, next) => {
 // GET /posts/5a7db6c74d55bc51bdf39793
 router.get('/posts/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  Post.findById(req.params.id)
+  Post.findById(req.params.id).populate('owner', '-token -posts -__v -createdAt -updatedAt')
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "example" JSON
     .then(post => res.status(200).json({ post: post.toObject() }))
@@ -45,6 +46,33 @@ router.get('/posts/:id', (req, res, next) => {
 router.post('/posts', requireToken, (req, res, next) => {
   // set owner of new example to be current user
   req.body.post.owner = req.user.id
+  User.findOne({_id: req.body.post.owner}, function(err, doc)
+  {
+    if(err) {
+      res.sendStatus(500).send('database error').end()
+    }
+    else if(!doc) {
+      res.sendStatus(404).send('user was not found').end()
+    }
+    else {
+      doc.posts.push({body: req.body.post.body, owner: req.body.post.owner})
+      Post.create(req.body.post)
+        // respond to succesful `create` with status 201 and JSON of new "example"
+        .then(post => {
+          res.status(201).json({ post: post.toObject() })
+        })
+        // if an error occurs, pass it off to our error handler
+        // the error handler needs the error message and the `res` object so that it
+        // can send an error message back to the client
+        .catch(next)
+
+        doc.markModified('posts')
+
+        doc.save()
+
+    }
+  })
+
 
   Post.create(req.body.post)
     // respond to succesful `create` with status 201 and JSON of new "example"
