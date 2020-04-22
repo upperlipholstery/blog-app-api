@@ -63,13 +63,20 @@ router.post('/comments', requireToken, (req, res, next) => {
 
     else
     {
-      doc.comments.push({body: req.body.comment.body, owner: req.body.comment.owner})
+
+
+      const email = req.user.email
+
+      doc.comments.push({ownerName: email, body: req.body.comment.body, owner: req.body.comment.owner})
+
+      console.log(doc.comments[doc.comments.length - 1])
 
       delete req.body.comment.postId
 
       Comment.create(req.body.comment)
         // respond to succesful `create` with status 201 and JSON of new "example"
         .then(comment => {
+          comment.populate('owner')
 
           res.status(201).json({ comment: comment.toObject() })
         })
