@@ -22,7 +22,7 @@ const router = express.Router()
 // INDEX
 // GET /comments
 router.get('/comments', (req, res, next) => {
-  Comment.find()
+  Comment.find().populate('owner', '-token -posts -__v -createdAt -updatedAt')
     .then(comments => {
       return comments.map(comment => comment.toObject())
     })
@@ -34,7 +34,7 @@ router.get('/comments', (req, res, next) => {
 // GET /comments/5a7db6c74d55bc51bdf39793
 router.get('/comments/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  Comment.findById(req.params.id)
+  Comment.findById(req.params.id).populate('owner', '-token -posts -__v -createdAt -updatedAt')
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "example" JSON
     .then(comment => res.status(200).json({ comment: comment.toObject() }))
@@ -76,8 +76,6 @@ router.post('/comments', requireToken, (req, res, next) => {
       Comment.create(req.body.comment)
         // respond to succesful `create` with status 201 and JSON of new "example"
         .then(comment => {
-          comment.populate('owner')
-
           res.status(201).json({ comment: comment.toObject() })
         })
         // if an error occurs, pass it off to our error handler
