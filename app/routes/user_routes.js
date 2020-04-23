@@ -5,6 +5,8 @@ const crypto = require('crypto')
 const passport = require('passport')
 // bcrypt docs: https://github.com/kelektiv/node.bcrypt.js
 const bcrypt = require('bcrypt')
+const customErrors = require('../../lib/custom_errors')
+const handle404 = customErrors.handle404
 
 // see above for explanation of "salting", 10 rounds is recommended
 const bcryptSaltRounds = 10
@@ -135,6 +137,15 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
   // save the token and respond with 204
   req.user.save()
     .then(() => res.sendStatus(204))
+    .catch(next)
+})
+
+router.get('/users/:id', requireToken, (req, res, next) => {
+  User.findById(req.user.id)
+    .then(handle404)
+  // if `findById` is succesful, respond with 200 and "example" JSON
+    .then(user => res.status(200).json({ user: user.toObject() }))
+  // if an error occurs, pass it to the handler
     .catch(next)
 })
 
