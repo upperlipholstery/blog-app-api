@@ -46,15 +46,12 @@ router.get('/posts/:id', (req, res, next) => {
 router.post('/posts', requireToken, (req, res, next) => {
   // set owner of new example to be current user
   req.body.post.owner = req.user.id
-  User.findOne({_id: req.body.post.owner}, function(err, doc)
-  {
-    if(err) {
+  User.findOne({_id: req.body.post.owner}, function (err, doc) {
+    if (err) {
       res.sendStatus(500).send('database error').end()
-    }
-    else if(!doc) {
+    } else if (!doc) {
       res.sendStatus(404).send('user was not found').end()
-    }
-    else {
+    } else {
       doc.posts.push({body: req.body.post.body, owner: req.body.post.owner})
       Post.create(req.body.post)
         // respond to succesful `create` with status 201 and JSON of new "example"
@@ -66,23 +63,11 @@ router.post('/posts', requireToken, (req, res, next) => {
         // can send an error message back to the client
         .catch(next)
 
-        doc.markModified('posts')
+      doc.markModified('posts')
 
-        doc.save()
-
+      doc.save()
     }
   })
-
-
-  Post.create(req.body.post)
-    // respond to succesful `create` with status 201 and JSON of new "example"
-    .then(post => {
-      res.status(201).json({ post: post.toObject() })
-    })
-    // if an error occurs, pass it off to our error handler
-    // the error handler needs the error message and the `res` object so that it
-    // can send an error message back to the client
-    .catch(next)
 })
 
 // UPDATE
