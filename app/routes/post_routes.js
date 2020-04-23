@@ -52,7 +52,7 @@ router.post('/posts', requireToken, (req, res, next) => {
     } else if (!doc) {
       res.sendStatus(404).send('user was not found').end()
     } else {
-      doc.posts.push({body: req.body.post.body, owner: req.body.post.owner})
+      doc.posts.push({title: req.body.post.title, body: req.body.post.body, owner: req.body.post.owner})
       Post.create(req.body.post)
         // respond to succesful `create` with status 201 and JSON of new "example"
         .then(post => {
@@ -62,9 +62,7 @@ router.post('/posts', requireToken, (req, res, next) => {
         // the error handler needs the error message and the `res` object so that it
         // can send an error message back to the client
         .catch(next)
-
       doc.markModified('posts')
-
       doc.save()
     }
   })

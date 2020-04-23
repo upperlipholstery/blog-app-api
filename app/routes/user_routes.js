@@ -143,9 +143,7 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 router.get('/users/:id', requireToken, (req, res, next) => {
   User.findById(req.user.id)
     .then(handle404)
-  // if `findById` is succesful, respond with 200 and "example" JSON
     .then(user => res.status(200).json({ user: user.toObject() }))
-  // if an error occurs, pass it to the handler
     .catch(next)
 })
 
