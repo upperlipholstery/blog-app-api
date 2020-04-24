@@ -37,3 +37,7 @@ This API is built to be used as the back-end for a blog application. It allows b
 ## Development
   The first thing to do was to create an ERD to plan out any relationships that we will need to utilize in our database.
   For our blog application we will need to create a model for our blog posts, which will be owned by a user, and a model for comments that will also be owned by a user as well as a blog post. We then need to create routes so that we can CRUD over blogs and comments.
+
+## Entity Relationship Diagram
+
+![ERD for Blog](./BLOG_ERD.png)
