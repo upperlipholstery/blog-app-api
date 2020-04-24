@@ -12,8 +12,12 @@ const postSchema = new mongoose.Schema({
   },
   comments: [comment.schema],
   owner: {
-    type: String,
-    required: true
+    _id: {
+      type: String
+    },
+    email: {
+      type: String
+    }
   }}, {
   timestamps: true
 })

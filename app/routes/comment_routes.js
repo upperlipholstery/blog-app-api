@@ -54,12 +54,10 @@ router.post('/comments', requireToken, (req, res, next) => {
         req.body.comment.ownerName = req.user.email
         console.log(req.body)
         post.comments.push(req.body.comment)
-        console.log(post.parent())
         return post.parent().save()
     })
     .then(post => {
-      console.log(post)
-      res.status(201).json({comment: post.toObject()})
+      res.status(201)
     })
     .catch(next)
 })
