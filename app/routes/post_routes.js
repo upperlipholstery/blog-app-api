@@ -4,7 +4,6 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for examples
-const Post = require('../models/post').model
 const User = require('../models/user')
 
 const customErrors = require('../../lib/custom_errors')
@@ -63,7 +62,7 @@ router.post('/posts', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /posts/5a7db6c74d55bc51bdf39793
-router.patch('/posts/:id', requireToken, (req, res, next) => {
+router.patch('/posts/:id', requireToken, removeBlanks, (req, res, next) => {
   User.findById(req.user.id)
     .then(handle404)
     .then(user => user.posts.id(req.params.id))
