@@ -10,6 +10,7 @@ curl "${API}${URL_PATH}/${ID}" \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
   "comment": {
+    "postId": "'"${POSTID}"'",
     "body": "'"${BODY}"'"
   }
 }'

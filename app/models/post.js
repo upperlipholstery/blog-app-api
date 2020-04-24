@@ -12,9 +12,12 @@ const postSchema = new mongoose.Schema({
   },
   comments: [comment.schema],
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    _id: {
+      type: String
+    },
+    email: {
+      type: String
+    }
   }}, {
   timestamps: true
 })
