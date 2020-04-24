@@ -45,28 +45,45 @@ router.get('/posts/:id', (req, res, next) => {
 // POST /posts
 router.post('/posts', requireToken, (req, res, next) => {
   // set owner of new example to be current user
-  req.body.post.owner = req.user.id
-  User.findOne({_id: req.body.post.owner}, function (err, doc) {
-    if (err) {
-      res.sendStatus(500).send('database error').end()
-    } else if (!doc) {
-      res.sendStatus(404).send('user was not found').end()
-    } else {
-      doc.posts.push({title: req.body.post.title, body: req.body.post.body, owner: req.body.post.owner})
-      Post.create(req.body.post)
-        // respond to succesful `create` with status 201 and JSON of new "example"
-        .then(post => {
-          res.status(201).json({ post: post.toObject() })
-        })
-        // if an error occurs, pass it off to our error handler
-        // the error handler needs the error message and the `res` object so that it
-        // can send an error message back to the client
-        .catch(next)
-      doc.markModified('posts')
-      doc.save()
-    }
-  })
+  User.findById(req.user.id)
+    .then(handle404)
+    .then(user => {
+        req.body.post.owner = req.user.id
+        console.log(req.body)
+        user.posts.push(req.body.post)
+        return user.save()
+    })
+    .then(user => {
+      res.status(201).json({post: user.posts[user.posts.length-1].toObject()})
+    })
+    .catch(next)
 })
+
+
+// router.post('/posts', requireToken, (req, res, next) => {
+//   // set owner of new example to be current user
+//   console.log(typeof req.user.id)
+//   req.body.post.owner = req.user.id
+//   User.findOne({_id: req.body.post.owner}, function (err, user) {
+//     if (err) {
+//       res.sendStatus(500).send('database error').end()
+//     } else if (!user) {
+//       res.sendStatus(404).send('user was not found').end()
+//     } else {
+//       user.posts.push(req.body.post)
+//       Post.create(req.body.post)
+//         // respond to succesful `create` with status 201 and JSON of new "example"
+//         .then(post => {
+//           res.status(201).json({ post: post.toObject() })
+//         })
+//         // if an error occurs, pass it off to our error handler
+//         // the error handler needs the error message and the `res` object so that it
+//         // can send an error message back to the client
+//         .catch(next)
+//       user.save()
+//     }
+//   })
+// })
 
 // UPDATE
 // PATCH /posts/5a7db6c74d55bc51bdf39793

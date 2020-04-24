@@ -5,8 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for examples
 const Comment = require('../models/comment').model
-
-const Post = require('../models/post').model
+const User = require('../models/user')
 
 const customErrors = require('../../lib/custom_errors')
 
@@ -46,32 +45,54 @@ router.get('/comments/:id', (req, res, next) => {
 // comment /comments
 router.post('/comments', requireToken, (req, res, next) => {
   // set owner of new example to be current user
-  req.body.comment.owner = req.user.id
-  Post.findOne({_id: req.body.comment.postId}, function(err, doc)
-  {
-    if(err)
-    { res.sendStatus(500).send('database error').end()}
-    else if(!doc)
-    { res.sendStatus(404).send('user was not found').end() }
-    else
-    {
-      const email = req.user.email
-      doc.comments.push({ownerName: email, body: req.body.comment.body, owner: req.body.comment.owner})
-      delete req.body.comment.postId
-      Comment.create(req.body.comment)
-        // respond to succesful `create` with status 201 and JSON of new "example"
-        .then(comment => {
-          res.status(201).json({ comment: comment.toObject() })
-        })
-        // if an error occurs, pass it off to our error handler
-        // the error handler needs the error message and the `res` object so that it
-        // can send an error message back to the client
-        .catch(next)
-        doc.markModified('comments')
-        doc.save()
-    }
-  })
+  // const postId = req.body.comment.postId
+  User.findById(req.user.id)
+    .then(user => user.posts.id(req.body.comment.postId))
+    .then(post => {
+        delete req.body.comment.postId
+        req.body.comment.owner = req.user.id
+        req.body.comment.ownerName = req.user.email
+        console.log(req.body)
+        post.comments.push(req.body.comment)
+        console.log(post.parent())
+        return post.parent().save()
+    })
+    .then(post => {
+      console.log(post)
+      res.status(201).json({comment: post.toObject()})
+    })
+    .catch(next)
 })
+//   Post.findOne({_id: req.body.comment.postId}, function(err, post)
+//   {
+//     console.log(post)
+//     console.log('------------split---------------')
+//     console.log(req.body)
+//     if(err)
+//     { res.sendStatus(500).send('database error').end()}
+//     else if(!post)
+//     { res.sendStatus(404).send('post was not found').end() }
+//     else
+//     {
+//       req.body.comment.ownerName = req.user.email
+//       delete req.body.comment.postId
+//       console.log('------------split---------------')
+//       console.log(req.body)
+//       post.comments.push({ownerName: email, body: req.body.comment.body, owner: req.body.comment.owner})
+//       Comment.create(req.body.comment)
+//         // respond to succesful `create` with status 201 and JSON of new "example"
+//         .then(comment => {
+//           res.status(201).json({ comment: comment.toObject() })
+//         })
+//         // if an error occurs, pass it off to our error handler
+//         // the error handler needs the error message and the `res` object so that it
+//         // can send an error message back to the client
+//         .catch(next)
+//         post.markModified('comments')
+//         post.save()
+//     }
+//   })
+// })
 
 // UPDATE
 // PATCH /comments/5a7db6c74d55bc51bdf39793
