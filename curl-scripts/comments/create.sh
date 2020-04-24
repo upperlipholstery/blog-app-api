@@ -11,7 +11,6 @@ curl "${API}${URL_PATH}" \
   --data '{
     "comment": {
       "postId": "'"${POSTID}"'",
-
       "body": "'"${BODY}"'"
     }
   }'

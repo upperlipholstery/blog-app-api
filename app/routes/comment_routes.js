@@ -45,34 +45,19 @@ router.get('/comments/:id', (req, res, next) => {
 // CREATE
 // comment /comments
 router.post('/comments', requireToken, (req, res, next) => {
-
   // set owner of new example to be current user
   req.body.comment.owner = req.user.id
-
   Post.findOne({_id: req.body.comment.postId}, function(err, doc)
   {
     if(err)
     { res.sendStatus(500).send('database error').end()}
-
-
-
     else if(!doc)
     { res.sendStatus(404).send('user was not found').end() }
-
-
-
     else
     {
-
-
       const email = req.user.email
-
       doc.comments.push({ownerName: email, body: req.body.comment.body, owner: req.body.comment.owner})
-
-      console.log(doc.comments[doc.comments.length - 1])
-
       delete req.body.comment.postId
-
       Comment.create(req.body.comment)
         // respond to succesful `create` with status 201 and JSON of new "example"
         .then(comment => {
@@ -82,14 +67,10 @@ router.post('/comments', requireToken, (req, res, next) => {
         // the error handler needs the error message and the `res` object so that it
         // can send an error message back to the client
         .catch(next)
-
         doc.markModified('comments')
-
         doc.save()
-
     }
   })
-
 })
 
 // UPDATE
