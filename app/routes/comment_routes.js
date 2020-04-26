@@ -27,10 +27,10 @@ router.get('/comments', (req, res, next) => {
     .then(users => users.forEach(user => postsArray.push(user.posts)))
     .then(() => [].concat.apply([], postsArray))
     .then(posts => posts.forEach(post => {
-        if(post.comments.length){
-          commentsArray.push(post.comments)
-        }
-      }))
+      if (post.comments.length) {
+        commentsArray.push(post.comments)
+      }
+    }))
     .then(() => [].concat.apply([], commentsArray))
     .then(comments => res.status(200).json({comments}))
 })
@@ -45,10 +45,10 @@ router.get('/comments/:id', (req, res, next) => {
     .then(users => users.forEach(user => postsArray.push(user.posts)))
     .then(() => [].concat.apply([], postsArray))
     .then(posts => posts.forEach(post => {
-        if(post.comments.length){
-          commentsArray.push(post.comments)
-        }
-      }))
+      if (post.comments.length) {
+        commentsArray.push(post.comments)
+      }
+    }))
     .then(() => [].concat.apply([], commentsArray))
     .then(flatComments => flatComments.filter(comment => comment._id == req.params.id))
     .then(comment => res.status(200).json({comment}))
@@ -62,14 +62,14 @@ router.post('/comments', requireToken, (req, res, next) => {
   User.findById(req.user.id)
     .then(user => user.posts.id(req.body.comment.postId))
     .then(post => {
-        delete req.body.comment.postId
-        req.body.comment.owner = req.user.id
-        req.body.comment.ownerName = req.user.email
-        post.comments.push(req.body.comment)
-        return post.parent().save()
+      delete req.body.comment.postId
+      req.body.comment.owner = req.user.id
+      req.body.comment.ownerName = req.user.email
+      post.comments.push(req.body.comment)
+      return post.parent().save()
     })
     .then(post => {
-      res.status(201)
+      res.status(201).json({post})
     })
     .catch(next)
 })
