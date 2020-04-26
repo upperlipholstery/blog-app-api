@@ -32,7 +32,7 @@ const clientDevPort = 7165
 mongoose.connect(db, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useAutoIndex: false
+  autoIndex: false
 })
 
 // instantiate express application object

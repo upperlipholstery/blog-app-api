@@ -59,7 +59,15 @@ router.get('/comments/:id', (req, res, next) => {
 router.post('/comments', requireToken, (req, res, next) => {
   // set owner of new example to be current user
   // const postId = req.body.comment.postId
-  User.findById(req.user.id)
+  const postsArray = []
+  let ownerOfPost
+  User.find()
+    .then(handle404)
+    .then(users => users.forEach(user => postsArray.push(user.posts)))
+    .then(() => [].concat.apply([], postsArray))
+    .then(flatPosts => flatPosts.filter(post => post._id == req.body.comment.postId))
+    .then(postFound => ownerOfPost = postFound[0].owner._id)
+    .then(() => User.findById(ownerOfPost))
     .then(user => user.posts.id(req.body.comment.postId))
     .then(post => {
       delete req.body.comment.postId
@@ -77,7 +85,15 @@ router.post('/comments', requireToken, (req, res, next) => {
 // UPDATE
 // PATCH /posts/5a7db6c74d55bc51bdf39793
 router.patch('/comments/:id', requireToken, removeBlanks, (req, res, next) => {
-  User.findById(req.user.id)
+  const postsArray = []
+  let ownerOfPost
+  User.find()
+    .then(handle404)
+    .then(users => users.forEach(user => postsArray.push(user.posts)))
+    .then(() => [].concat.apply([], postsArray))
+    .then(flatPosts => flatPosts.filter(post => post._id == req.body.comment.postId))
+    .then(postFound => ownerOfPost = postFound[0].owner._id)
+    .then(() => User.findById(ownerOfPost))
     .then(handle404)
     .then(user => user.posts.id(req.body.comment.postId))
     .then(post => post.comments.id(req.params.id))
@@ -93,7 +109,15 @@ router.patch('/comments/:id', requireToken, removeBlanks, (req, res, next) => {
 // DESTROY
 // DELETE /comments/5a7db6c74d55bc51bdf39793
 router.delete('/comments/:id', requireToken, (req, res, next) => {
-  User.findById(req.user.id)
+  const postsArray = []
+  let ownerOfPost
+  User.find()
+    .then(handle404)
+    .then(users => users.forEach(user => postsArray.push(user.posts)))
+    .then(() => [].concat.apply([], postsArray))
+    .then(flatPosts => flatPosts.filter(post => post._id == req.body.comment.postId))
+    .then(postFound => ownerOfPost = postFound[0].owner._id)
+    .then(() => User.findById(ownerOfPost))
     .then(handle404)
     .then(user => user.posts.id(req.body.comment.postId))
     .then(post => post.comments.id(req.params.id))
