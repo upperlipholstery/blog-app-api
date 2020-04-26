@@ -37,7 +37,7 @@ router.get('/posts/:id', (req, res, next) => {
     .then(handle404)
     .then(users => users.forEach(user => postsArray.push(user.posts)))
     .then(() => [].concat.apply([], postsArray))
-    .then(flatPosts =>  flatPosts.filter(post => post._id == req.params.id))
+    .then(flatPosts => flatPosts.filter(post => post._id == req.params.id))
     .then(post => res.status(200).json({ post }))
 })
 
@@ -48,14 +48,14 @@ router.post('/posts', requireToken, (req, res, next) => {
   User.findById(req.user.id)
     .then(handle404)
     .then(user => {
-        req.body.post.owner = {}
-        req.body.post.owner._id = req.user.id
-        req.body.post.owner.email = req.user.email
-        user.posts.push(req.body.post)
-        return user.save()
+      req.body.post.owner = {}
+      req.body.post.owner._id = req.user.id
+      req.body.post.owner.email = req.user.email
+      user.posts.push(req.body.post)
+      return user.save()
     })
     .then(user => {
-      res.status(201).json({post: user.posts[user.posts.length-1].toObject()})
+      res.status(201).json({post: user.posts[user.posts.length - 1].toObject()})
     })
     .catch(next)
 })
