@@ -1,16 +1,17 @@
 #!/bin/bash
 
 API="http://localhost:4741"
-URL_PATH="/comments"
+URL_PATH="/notes"
 
 curl "${API}${URL_PATH}/${ID}" \
   --include \
-  --request DELETE \
+  --request PATCH \
   --header "Content-Type: application/json" \
-  --header "Authorization: Bearer ${TOKEN}"\
+  --header "Authorization: Bearer ${TOKEN}" \
   --data '{
-  "comment": {
-    "postId": "'"${POSTID}"'"
+  "note": {
+    "tomeId": "'"${TOMEID}"'",
+    "body": "'"${BODY}"'"
   }
 }'
 echo

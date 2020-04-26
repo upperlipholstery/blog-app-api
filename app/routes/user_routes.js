@@ -143,7 +143,7 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 router.get('/users/:id', requireToken, (req, res, next) => {
   User.findById(req.params.id)
     .then(handle404)
-    .then(user => res.status(200).json({ posts: user.posts.toObject() }))
+    .then(user => res.status(200).json({ tomes: user.tomes.toObject() }))
     .catch(next)
 })
 

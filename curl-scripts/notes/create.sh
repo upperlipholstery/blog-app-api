@@ -1,7 +1,7 @@
 #!/bin/bash
 
 API="http://localhost:4741"
-URL_PATH="/posts"
+URL_PATH="/notes"
 
 curl "${API}${URL_PATH}" \
   --include \
@@ -9,8 +9,8 @@ curl "${API}${URL_PATH}" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
-    "post": {
-      "title": "'"${TITLE}"'",
+    "note": {
+      "tomeId": "'"${TOMEID}"'",
       "body": "'"${BODY}"'"
     }
   }'

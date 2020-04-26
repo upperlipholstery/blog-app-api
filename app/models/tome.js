@@ -1,16 +1,15 @@
 const mongoose = require('mongoose')
-const comment = require('./comment')
-const postSchema = new mongoose.Schema({
+const note = require('./note')
+const tomeSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   body: {
     type: String,
     required: true
   },
-  comments: [comment.schema],
+  notes: [note.schema],
   owner: {
     _id: {
       type: String
@@ -23,6 +22,6 @@ const postSchema = new mongoose.Schema({
 })
 
 module.exports = {
-  model: mongoose.model('Post', postSchema),
-  schema: postSchema
+  model: mongoose.model('Tome', tomeSchema),
+  schema: tomeSchema
 }
