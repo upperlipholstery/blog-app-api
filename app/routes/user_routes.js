@@ -31,10 +31,10 @@ const router = express.Router()
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
-  //Checks that the username isn't taken
+  // Checks that the username isn't taken
   User.find()
     .then(users => users.filter(user => req.body.credentials.email === user.email))
-    .then(temp => {if(temp.length){throw new BadUserName()}})
+    .then(temp => { if (temp.length) { throw new BadUserName() } })
     .then(() => req.body.credentials)
     // reject any requests where `credentials.password` is not present, or where
     // the password is an empty string
@@ -149,6 +149,29 @@ router.get('/users/:id', requireToken, (req, res, next) => {
     .then(handle404)
     .then(user => res.status(200).json({ tomes: user.tomes.toObject() }))
     .catch(next)
+})
+
+router.get('/favorites', requireToken, (req, res, next) => {
+  const favoritesArray = []
+  User.find()
+    .then(users => users.forEach(user => favoritesArray.push(user.tomes)))
+    .then(() => [].concat.apply([], favoritesArray))
+    .then(flatTomes => flatTomes.filter(flatTome => req.user.favTomes.include(flatTome._id.toString())))
+    .then(favTomes => res.status(200).json({favTomes}))
+    .catch(next)
+})
+
+router.post('/favorites/:id', requireToken, (req, res, next) => {
+  User.findById(req.user._id)
+    .then(user => {
+      if (!user.favTomes.includes(req.params.id.toString())) {
+        user.favTomes.push(req.params.id)
+        res.status(204)
+      } else {
+        user.favTomes = user.favTomes.filter(fav => fav !== req.params.id)
+      }
+      // user.save()
+    })
 })
 
 module.exports = router
