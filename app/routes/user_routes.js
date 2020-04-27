@@ -151,27 +151,4 @@ router.get('/users/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-router.get('/favorites', requireToken, (req, res, next) => {
-  const favoritesArray = []
-  User.find()
-    .then(users => users.forEach(user => favoritesArray.push(user.tomes)))
-    .then(() => [].concat.apply([], favoritesArray))
-    .then(flatTomes => flatTomes.filter(flatTome => req.user.favTomes.include(flatTome._id.toString())))
-    .then(favTomes => res.status(200).json({favTomes}))
-    .catch(next)
-})
-
-router.post('/favorites/:id', requireToken, (req, res, next) => {
-  User.findById(req.user._id)
-    .then(user => {
-      if (!user.favTomes.includes(req.params.id.toString())) {
-        user.favTomes.push(req.params.id)
-        res.status(204)
-      } else {
-        user.favTomes = user.favTomes.filter(fav => fav !== req.params.id)
-      }
-      // user.save()
-    })
-})
-
 module.exports = router

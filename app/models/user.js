@@ -12,7 +12,9 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   tomes: [tome.schema],
-  favTomes: [],
+  favTomes: {
+    type: Array
+  },
   token: String
 }, {
   timestamps: true,
