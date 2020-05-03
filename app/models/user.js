@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imageUrl: String,
+  imageTitle: String,
   tomes: [tome.schema],
   favTomes: {
     type: Array
