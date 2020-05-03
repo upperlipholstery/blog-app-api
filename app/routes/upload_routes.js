@@ -30,78 +30,56 @@ router.post('/uploads', requireToken, upload.single('image'), (req, res, next) =
   // console.log(req.file.originalname)
   s3Upload(req.file)
     .then((data) => {
+      //using a virtual setter
       User.findById(req.user.id)
-        .then(user => user.imageUrl = data.Location)
-      return data.Location
+        .then(user => {
+          user.imageTitle = data.Key
+          user.imageUrl = data.Location
+          user.save()
+          res.status(201).json({imageUrl: user.imageUrl})
+        })
     })
-    .then(upload => res.status(201).json({
-      imageUrl: upload
-    }))
     .catch(next)
 })
 
-// // INDEX route
-// router.get('/uploads', requireToken, (req, res, next) => {
-//   const imageUrlArray = []
-//   User.find()
-//     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
-//     .then(() => [].concat.apply([], tomesArray))
-//     .then(flatTomes => res.status(200).json({tomes: flatTomes}))
-//     .catch(next)
-// })
-//
-//
-//
-// router.get('/uploads', requireToken, (req, res, next) => {
-//   Upload.find()
-//     .then(uploads => {
-//       return uploads.map(upload => upload.toObject())
-//     })
-//     // respond with status 200 and JSON of the uploads
-//     .then(uploads => res.status(200).json({ uploads: uploads }))
-//     // if an error occurs, pass it to the handler
-//     .catch(next)
-// })
-//
-// // UPDATE route
-// router.patch('/uploads/:id', requireToken, upload.single('image'), (req, res, next) => {
-//   Upload.findById(req.params.id)
-//     .then(handle404)
-//     .then(upload => {
-//       requireOwnership(req, upload)
-//       return upload
-//     })
-//
-//     .then(upload => {
-//       upload.tag = req.body.tag
-//       upload.save()
-//       return upload
-//     })
-//     .then(upload => {
-//       res.status(200).json({
-//         upload: upload.toObject()
-//       })
-//     })
-//     .catch(next)
-// })
-//
-// // DELETE route
-// router.delete('/uploads/:id', requireToken, (req, res, next) => {
-//   Upload.findById(req.params.id)
-//     .then(handle404)
-//     .then(upload => {
-//       requireOwnership(req, upload)
-//       return upload
-//     })
-//     .then(upload => {
-//       s3Delete(req.body.title)
-//       return upload
-//     })
-//     .then(upload => {
-//       upload.deleteOne()
-//     })
-//     .then(() => res.sendStatus(204))
-//     .catch(next)
-// })
+// INDEX route
+router.get('/uploads', requireToken, (req, res, next) => {
+  const imageUrlArray = []
+  User.find()
+    .then(users => users.forEach(user => imageUrlArray.push(user.imageUrl)))
+    .then(() => res.status(200).json({imageUrls: imageUrlArray}))
+    .catch(next)
+})
+
+// UPDATE route
+router.patch('/uploads', requireToken, upload.single('image'), (req, res, next) => {
+  User.findById(req.user.id)
+    .then(user => {
+      s3Delete(user.imageTitle)
+      return user
+    })
+    .then(user => {
+      s3Upload(req.file)
+        .then(data => {
+          user.imageTitle = data.Key
+          user.imageUrl = data.Location
+          user.save()
+          res.status(201).json({imageUrl: user.imageUrl})
+        })
+    })
+})
+
+// DELETE route
+router.delete('/uploads', requireToken, (req, res, next) => {
+  User.findById(req.user.id)
+    .then(user => {
+      s3Delete(user.imageTitle)
+      user.imageTitle = ''
+      user.imageUrl = 'false'
+      user.save()
+      res.status(204)
+    })
+    .catch(next)
+})
 
 module.exports = router
