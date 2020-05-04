@@ -27,10 +27,34 @@ router.post('/favorites/:id', requireToken, (req, res, next) => {
     .then(user => {
       if (!user.favTomes.includes(req.params.id.toString())) {
         user.favTomes.push(req.params.id)
+        const tomesArray = []
+        User.find()
+          .then(users => users.forEach(person => tomesArray.push(person.tomes)))
+          .then(() => [].concat.apply([], tomesArray))
+          .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
+          .then(tome => {
+            User.findById(tome.owner._id)
+              .then(person => {
+                person.numFavs++
+                person.save()
+              })
+          })
         user.save()
         res.sendStatus(200)
       } else {
         user.favTomes = user.favTomes.filter(fav => fav !== req.params.id)
+        const tomesArray = []
+        User.find()
+          .then(users => users.forEach(person => tomesArray.push(person.tomes)))
+          .then(() => [].concat.apply([], tomesArray))
+          .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
+          .then(tome => {
+            User.findById(tome.owner._id)
+              .then(person => {
+                person.numFavs--
+                person.save()
+              })
+          })
         user.save()
         res.sendStatus(204)
       }
