@@ -38,11 +38,10 @@ router.post('/uploads', requireToken, upload.single('image'), (req, res, next) =
           user.imageTitle = data.Key
           user.imageUrl = data.Location
           user.save()
-          // console.log(req.file)
-          // const directory = '../routes/app/uploads/';
-          // fs.unlink(path.join(directory, req.file.filename), err => {
-          //   if (err) throw err
-          // })
+          const directory = './uploads/'
+          fs.unlink(path.join(directory, req.file.filename), err => {
+            if (err) throw err
+          })
           res.status(201).json({imageUrl: user.imageUrl})
         })
     })
@@ -68,12 +67,17 @@ router.patch('/uploads', requireToken, upload.single('image'), (req, res, next) 
     .then(user => {
       s3Upload(req.file)
         .then(data => {
+          const directory = './uploads/'
+          fs.unlink(path.join(directory, req.file.filename), err => {
+            if (err) throw err
+          })
           user.imageTitle = data.Key
           user.imageUrl = data.Location
           user.save()
           res.status(201).json({imageUrl: user.imageUrl})
         })
     })
+    .catch(next)
 })
 
 // DELETE route
