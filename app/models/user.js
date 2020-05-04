@@ -11,8 +11,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imageUrl: String,
+  imageTitle: String,
   tomes: [tome.schema],
-  favTomes: [tome.schema],
+  likedTomes: {
+    type: Array
+  },
+  favTomes: {
+    type: Array
+  },
   token: String
 }, {
   timestamps: true,

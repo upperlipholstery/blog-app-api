@@ -31,10 +31,10 @@ const router = express.Router()
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
-  //Checks that the username isn't taken
+  // Checks that the username isn't taken
   User.find()
     .then(users => users.filter(user => req.body.credentials.email === user.email))
-    .then(temp => {if(temp.length){throw new BadUserName()}})
+    .then(temp => { if (temp.length) { throw new BadUserName() } })
     .then(() => req.body.credentials)
     // reject any requests where `credentials.password` is not present, or where
     // the password is an empty string
@@ -50,6 +50,7 @@ router.post('/sign-up', (req, res, next) => {
     .then(hash => {
       // return necessary params to create a user
       return {
+        imageUrl: 'false',
         email: req.body.credentials.email,
         hashedPassword: hash
       }
@@ -147,7 +148,7 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 router.get('/users/:id', requireToken, (req, res, next) => {
   User.findById(req.params.id)
     .then(handle404)
-    .then(user => res.status(200).json({ tomes: user.tomes.toObject() }))
+    .then(user => res.status(200).json({ user: user.toObject() }))
     .catch(next)
 })
 
