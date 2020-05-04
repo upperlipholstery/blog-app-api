@@ -10,6 +10,7 @@ const tomeRoutes = require('./app/routes/tome_routes')
 const noteRoutes = require('./app/routes/note_routes')
 const favoriteRoutes = require('./app/routes/favorite_routes')
 const uploadRoutes = require('./app/routes/upload_routes')
+const likeRoutes = require('./app/routes/like_routes')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -72,6 +73,7 @@ app.use(tomeRoutes)
 app.use(noteRoutes)
 app.use(favoriteRoutes)
 app.use(uploadRoutes)
+app.use(likeRoutes)
 
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be

@@ -55,6 +55,7 @@ router.post('/tomes', requireToken, (req, res, next) => {
       req.body.tome.owner = {}
       req.body.tome.owner._id = req.user.id
       req.body.tome.owner.email = req.user.email
+      req.body.tome.likes = 0
       user.tomes.push(req.body.tome)
       return user.save()
     })
