@@ -37,8 +37,13 @@ router.post('/likes/:id', requireToken, (req, res, next) => {
           .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
           .then(tome => {
             tome.likes = tome.likes + 1
-            tome.parent().save()
-            res.sendStatus(200)
+            User.findById(tome.owner._id)
+              .then(user => {
+                user.numLikes++
+                user.save()
+                tome.parent().save()
+                res.sendStatus(200)
+              })
           })
       } else {
         //editing currenly logged in user to remove tome from likes
@@ -52,8 +57,13 @@ router.post('/likes/:id', requireToken, (req, res, next) => {
           .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
           .then(tome => {
             tome.likes = tome.likes - 1
-            tome.parent().save()
-            res.sendStatus(204)
+            User.findById(tome.owner._id)
+              .then(user => {
+                user.numLikes--
+                user.save()
+                tome.parent().save()
+                res.sendStatus(204)
+              })
           })
       }
     })
