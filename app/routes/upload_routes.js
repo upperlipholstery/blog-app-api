@@ -1,6 +1,8 @@
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 const passport = require('passport')
+const fs = require('fs')
+const path = require('path')
 
 // pull in Mongoose model for uploads
 const User = require('../models/user')
@@ -36,6 +38,11 @@ router.post('/uploads', requireToken, upload.single('image'), (req, res, next) =
           user.imageTitle = data.Key
           user.imageUrl = data.Location
           user.save()
+          // console.log(req.file)
+          // const directory = '../routes/app/uploads/';
+          // fs.unlink(path.join(directory, req.file.filename), err => {
+          //   if (err) throw err
+          // })
           res.status(201).json({imageUrl: user.imageUrl})
         })
     })

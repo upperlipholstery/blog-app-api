@@ -156,7 +156,7 @@ router.get('/users/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-router.patch('/user_bio', requireToken (req, res, next) => {
+router.patch('/user_bio', requireToken, (req, res, next) => {
   User.findById(req.user.id)
     .then(user => {
       user.bio = req.body.bio
