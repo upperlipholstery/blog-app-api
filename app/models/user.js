@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   numFavs: Number,
   numLikes: Number,
   numNotes: Number,
+  bio: String,
   likedTomes: {
     type: Array
   },
