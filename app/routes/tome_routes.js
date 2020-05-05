@@ -41,6 +41,10 @@ router.get('/tomes/:id', (req, res, next) => {
     .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
+    .then(flatTomes => flatTomes.map(tome => {
+      tome.avatarUrl = tome.parent().imageUrl
+      return tome
+    }))
     .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id))
     .then(tome => res.status(200).json({ tome }))
 })
