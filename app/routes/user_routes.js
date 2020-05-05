@@ -161,6 +161,7 @@ router.patch('/user_bio', requireToken, (req, res, next) => {
     .then(user => {
       user.bio = req.body.bio
       user.save()
+      res.sendStatus(201)
     })
 })
 
