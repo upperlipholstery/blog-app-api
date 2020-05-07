@@ -23,7 +23,6 @@ router.get('/notes', (req, res, next) => {
   const tomesArray = []
   const notesArray = []
   User.find()
-    .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
     .then(tomes => tomes.forEach(tome => {

@@ -10,6 +10,7 @@ const noteSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  imageUrl: String,
   ownerName: {
     type: String
   }

@@ -22,13 +22,35 @@ const router = express.Router()
 router.get('/tomes', (req, res, next) => {
   const tomesArray = []
   User.find()
-    .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
-    .then(flatTomes => flatTomes.map(tome => {
-      tome.avatarUrl = tome.parent().imageUrl
-      return tome
-    }))
+    .then(flatTomes => {
+      flatTomes.map(tome => {
+        tome.notes.map(async (note) => {
+          try {
+            let user = await User.findById(note.owner)
+            note.imageUrl = user.imageUrl
+            // let saved = await tome.parent().save()
+            console.log(note, 'in code')
+          } catch (err) {
+            console.log(err)
+          }
+          // console.log(note,'spot 1')
+          //   .then(user => {
+          //     note.imageUrl = user.imageUrl
+          //   })
+          // console.log(note, 'note')
+          // tome.parent().save()
+          return note
+        })
+        tome.avatarUrl = tome.parent().imageUrl
+        return tome
+        // console.log(note, 'spot 2')
+        // tome.parent().save()
+      })
+      return flatTomes
+    })
+    .then(flatTomes => {flatTomes.forEach(tome => tome.notes.forEach(note => console.log(note))) ; return flatTomes})
     .then(flatTomes => res.status(200).json({tomes: flatTomes}))
     .catch(next)
 })
@@ -46,6 +68,14 @@ router.get('/tomes/:id', (req, res, next) => {
       return tome
     }))
     .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id))
+    .then(tome => {
+      tome[0].notes.map(note => {
+        User.findById(note.owner)
+          .then(user => note.imageUrl = user.imageUrl)
+        return tome
+      })
+      return tome
+    })
     .then(tome => res.status(200).json({ tome }))
 })
 
