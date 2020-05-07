@@ -17,6 +17,10 @@ router.get('/favorites', requireToken, (req, res, next) => {
   User.find()
     .then(users => users.forEach(user => favoritesArray.push(user.tomes)))
     .then(() => [].concat.apply([], favoritesArray))
+    .then(flatTomes => flatTomes.map(tome => {
+      tome.avatarUrl = tome.parent().imageUrl
+      return tome
+    }))
     .then(flatTomes => flatTomes.filter(flatTome => req.user.favTomes.includes(flatTome._id.toString())))
     .then(favTomes => res.status(200).json({favTomes}))
     .catch(next)
