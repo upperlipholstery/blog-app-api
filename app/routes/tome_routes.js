@@ -24,33 +24,23 @@ router.get('/tomes', (req, res, next) => {
   User.find()
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
-    .then(flatTomes => {
-      flatTomes.map(tome => {
-        tome.notes.map(async (note) => {
+    .then(async flatTomes => {
+      for (let i = 0; i < flatTomes.length; i++){
+        for (let j = 0; j < flatTomes[i].notes.length; j++){
           try {
-            let user = await User.findById(note.owner)
-            note.imageUrl = user.imageUrl
+            let user = await User.findById(flatTomes[i].notes[j].owner)
+            flatTomes[i].notes[j].imageUrl = user.imageUrl
             // let saved = await tome.parent().save()
-            console.log(note, 'in code')
+            // console.log(flatTomes[i].notes[j], 'in code')
           } catch (err) {
             console.log(err)
           }
-          // console.log(note,'spot 1')
-          //   .then(user => {
-          //     note.imageUrl = user.imageUrl
-          //   })
-          // console.log(note, 'note')
-          // tome.parent().save()
-          return note
-        })
-        tome.avatarUrl = tome.parent().imageUrl
-        return tome
-        // console.log(note, 'spot 2')
-        // tome.parent().save()
-      })
+        }
+        flatTomes[i].avatarUrl = flatTomes[i].parent().imageUrl
+      }
       return flatTomes
     })
-    .then(flatTomes => {flatTomes.forEach(tome => tome.notes.forEach(note => console.log(note))) ; return flatTomes})
+    // .then(flatTomes => {flatTomes.forEach(tome => tome.notes.forEach(note => console.log(note))) ; return flatTomes})
     .then(flatTomes => res.status(200).json({tomes: flatTomes}))
     .catch(next)
 })
@@ -67,13 +57,17 @@ router.get('/tomes/:id', (req, res, next) => {
       tome.avatarUrl = tome.parent().imageUrl
       return tome
     }))
-    .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id))
-    .then(tome => {
-      tome[0].notes.map(note => {
-        User.findById(note.owner)
-          .then(user => note.imageUrl = user.imageUrl)
-        return tome
-      })
+    .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
+    .then(async tome => {
+      for (let i = 0; i < tome.notes.length; i++ ){
+        let user = await User.findById(tome.notes[i].owner)
+        tome.notes[i].imageUrl = user.imageUrl
+      }
+      // tome.notes.map(note => {
+      //   User.findById(note.owner)
+      //     .then(user => note.imageUrl = user.imageUrl)
+      //   return tome
+      // })
       return tome
     })
     .then(tome => res.status(200).json({ tome }))
