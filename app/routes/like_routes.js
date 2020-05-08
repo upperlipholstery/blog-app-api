@@ -15,7 +15,7 @@ const router = express.Router()
 router.get('/likes', requireToken, (req, res, next) => {
   const likesArray = []
   User.find()
-    .then(users => {console.log(req.user) ; console.log(req.user.id) ; users.forEach(user => likesArray.push(user.tomes))})
+    .then(users => users.forEach(user => likesArray.push(user.tomes)))
     .then(() => [].concat.apply([], likesArray))
     .then(flatTomes => flatTomes.filter(flatTome => req.user.likedTomes.includes(flatTome._id.toString())))
     .then(likedTomes => res.status(200).json({likedTomes}))

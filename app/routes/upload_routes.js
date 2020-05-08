@@ -28,8 +28,6 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 // Create route
 router.post('/uploads', requireToken, upload.single('image'), (req, res, next) => {
-  // const title = req.body.title
-  // console.log(req.file.originalname)
   s3Upload(req.file)
     .then((data) => {
       //using a virtual setter

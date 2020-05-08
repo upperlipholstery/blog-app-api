@@ -30,8 +30,6 @@ router.get('/tomes', (req, res, next) => {
           try {
             let user = await User.findById(flatTomes[i].notes[j].owner)
             flatTomes[i].notes[j].imageUrl = user.imageUrl
-            // let saved = await tome.parent().save()
-            // console.log(flatTomes[i].notes[j], 'in code')
           } catch (err) {
             console.log(err)
           }
@@ -40,7 +38,6 @@ router.get('/tomes', (req, res, next) => {
       }
       return flatTomes
     })
-    // .then(flatTomes => {flatTomes.forEach(tome => tome.notes.forEach(note => console.log(note))) ; return flatTomes})
     .then(flatTomes => res.status(200).json({tomes: flatTomes}))
     .catch(next)
 })
@@ -117,8 +114,6 @@ router.delete('/tomes/:id', requireToken, (req, res, next) => {
     .then(user => user.tomes.id(req.params.id))
     .then(handle404)
     .then(tome => {
-      console.log(tome)
-      console.log(req.user.id)
       requireOwnership(req, tome)
       tome.remove()
       tome.parent().save()
