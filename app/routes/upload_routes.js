@@ -1,6 +1,8 @@
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 const passport = require('passport')
+const fs = require('fs')
+const path = require('path')
 
 // pull in Mongoose model for uploads
 const User = require('../models/user')
@@ -26,8 +28,6 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 // Create route
 router.post('/uploads', requireToken, upload.single('image'), (req, res, next) => {
-  // const title = req.body.title
-  // console.log(req.file.originalname)
   s3Upload(req.file)
     .then((data) => {
       //using a virtual setter
@@ -36,6 +36,10 @@ router.post('/uploads', requireToken, upload.single('image'), (req, res, next) =
           user.imageTitle = data.Key
           user.imageUrl = data.Location
           user.save()
+          const directory = './uploads/'
+          fs.unlink(path.join(directory, req.file.filename), err => {
+            if (err) throw err
+          })
           res.status(201).json({imageUrl: user.imageUrl})
         })
     })
@@ -61,12 +65,17 @@ router.patch('/uploads', requireToken, upload.single('image'), (req, res, next) 
     .then(user => {
       s3Upload(req.file)
         .then(data => {
+          const directory = './uploads/'
+          fs.unlink(path.join(directory, req.file.filename), err => {
+            if (err) throw err
+          })
           user.imageTitle = data.Key
           user.imageUrl = data.Location
           user.save()
           res.status(201).json({imageUrl: user.imageUrl})
         })
     })
+    .catch(next)
 })
 
 // DELETE route

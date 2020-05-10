@@ -15,7 +15,7 @@ const router = express.Router()
 router.get('/likes', requireToken, (req, res, next) => {
   const likesArray = []
   User.find()
-    .then(users => {console.log(req.user) ; console.log(req.user.id) ; users.forEach(user => likesArray.push(user.tomes))})
+    .then(users => users.forEach(user => likesArray.push(user.tomes)))
     .then(() => [].concat.apply([], likesArray))
     .then(flatTomes => flatTomes.filter(flatTome => req.user.likedTomes.includes(flatTome._id.toString())))
     .then(likedTomes => res.status(200).json({likedTomes}))
@@ -37,8 +37,13 @@ router.post('/likes/:id', requireToken, (req, res, next) => {
           .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
           .then(tome => {
             tome.likes = tome.likes + 1
-            tome.parent().save()
-            res.sendStatus(200)
+            User.findById(tome.owner._id)
+              .then(user => {
+                user.numLikes++
+                user.save()
+                tome.parent().save()
+                res.sendStatus(200)
+              })
           })
       } else {
         //editing currenly logged in user to remove tome from likes
@@ -52,8 +57,13 @@ router.post('/likes/:id', requireToken, (req, res, next) => {
           .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
           .then(tome => {
             tome.likes = tome.likes - 1
-            tome.parent().save()
-            res.sendStatus(204)
+            User.findById(tome.owner._id)
+              .then(user => {
+                user.numLikes--
+                user.save()
+                tome.parent().save()
+                res.sendStatus(204)
+              })
           })
       }
     })

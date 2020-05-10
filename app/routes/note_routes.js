@@ -23,7 +23,6 @@ router.get('/notes', (req, res, next) => {
   const tomesArray = []
   const notesArray = []
   User.find()
-    .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
     .then(tomes => tomes.forEach(tome => {
@@ -57,8 +56,11 @@ router.get('/notes/:id', (req, res, next) => {
 // CREATE
 // note /notes
 router.post('/notes', requireToken, (req, res, next) => {
-  // set owner of new example to be current user
-  // const tomeId = req.body.note.tomeId
+  User.findById(req.user.id)
+    .then(user => {
+      user.numNotes++
+      user.save()
+    })
   const tomesArray = []
   let ownerOfTome
   User.find()
@@ -109,6 +111,11 @@ router.patch('/notes/:id', requireToken, removeBlanks, (req, res, next) => {
 // DESTROY
 // DELETE /notes/5a7db6c74d55bc51bdf39793
 router.delete('/notes/:id', requireToken, (req, res, next) => {
+  User.findById(req.user.id)
+    .then(user => {
+      user.numNotes--
+      user.save()
+    })
   const tomesArray = []
   let ownerOfTome
   User.find()

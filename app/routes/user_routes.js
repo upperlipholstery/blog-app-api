@@ -50,7 +50,11 @@ router.post('/sign-up', (req, res, next) => {
     .then(hash => {
       // return necessary params to create a user
       return {
-        imageUrl: 'false',
+        imageUrl: 'https://imgur.com/h72kXYv.png',
+        numFavs: 0,
+        numLikes: 0,
+        numNotes: 0,
+        bio: 'I am a user of Tomes! Welcome to my bio.',
         email: req.body.credentials.email,
         hashedPassword: hash
       }
@@ -150,6 +154,15 @@ router.get('/users/:id', requireToken, (req, res, next) => {
     .then(handle404)
     .then(user => res.status(200).json({ user: user.toObject() }))
     .catch(next)
+})
+
+router.patch('/user_bio', requireToken, (req, res, next) => {
+  User.findById(req.user.id)
+    .then(user => {
+      user.bio = req.body.bio
+      user.save()
+      res.sendStatus(201)
+    })
 })
 
 module.exports = router

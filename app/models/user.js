@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
   imageUrl: String,
   imageTitle: String,
   tomes: [tome.schema],
+  numFavs: Number,
+  numLikes: Number,
+  numNotes: Number,
+  bio: String,
   likedTomes: {
     type: Array
   },

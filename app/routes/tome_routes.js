@@ -22,13 +22,22 @@ const router = express.Router()
 router.get('/tomes', (req, res, next) => {
   const tomesArray = []
   User.find()
-    .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
-    .then(flatTomes => flatTomes.map(tome => {
-      tome.avatarUrl = tome.parent().imageUrl
-      return tome
-    }))
+    .then(async flatTomes => {
+      for (let i = 0; i < flatTomes.length; i++){
+        for (let j = 0; j < flatTomes[i].notes.length; j++){
+          try {
+            let user = await User.findById(flatTomes[i].notes[j].owner)
+            flatTomes[i].notes[j].imageUrl = user.imageUrl
+          } catch (err) {
+            console.log(err)
+          }
+        }
+        flatTomes[i].avatarUrl = flatTomes[i].parent().imageUrl
+      }
+      return flatTomes
+    })
     .then(flatTomes => res.status(200).json({tomes: flatTomes}))
     .catch(next)
 })
@@ -41,7 +50,23 @@ router.get('/tomes/:id', (req, res, next) => {
     .then(handle404)
     .then(users => users.forEach(user => tomesArray.push(user.tomes)))
     .then(() => [].concat.apply([], tomesArray))
-    .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id))
+    .then(flatTomes => flatTomes.map(tome => {
+      tome.avatarUrl = tome.parent().imageUrl
+      return tome
+    }))
+    .then(flatTomes => flatTomes.filter(tome => tome._id == req.params.id)[0])
+    .then(async tome => {
+      for (let i = 0; i < tome.notes.length; i++ ){
+        let user = await User.findById(tome.notes[i].owner)
+        tome.notes[i].imageUrl = user.imageUrl
+      }
+      // tome.notes.map(note => {
+      //   User.findById(note.owner)
+      //     .then(user => note.imageUrl = user.imageUrl)
+      //   return tome
+      // })
+      return tome
+    })
     .then(tome => res.status(200).json({ tome }))
 })
 
@@ -89,8 +114,6 @@ router.delete('/tomes/:id', requireToken, (req, res, next) => {
     .then(user => user.tomes.id(req.params.id))
     .then(handle404)
     .then(tome => {
-      console.log(tome)
-      console.log(req.user.id)
       requireOwnership(req, tome)
       tome.remove()
       tome.parent().save()
