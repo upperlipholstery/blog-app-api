@@ -55,4 +55,4 @@ This API is built to be used as the back-end for a blog application. It allows t
 
 ## Entity Relationship Diagram
 
-[ERD for Tome](./BLOG_ERD.png)
+[ERD for Tome](./TOME_ERD.png)
