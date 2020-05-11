@@ -3,16 +3,14 @@
 An API built for use with <blog-app-client> Blog Application utilizing the following technologies:
 *Express.js
 *Mongoose
-*MongoDB  
+*MongoDB
 
 This API is built to be used as the back-end for a blog application. It allows tomes to be registered by users of the API and write their own tomes as well as leave notes for other users. Users can also archive or like tomes, archive adds to their archived tomes list while like records the number of likes on a tome. Personal bios allow users to leave a short description of themselves, see their own or other users' stats, and upload an avatar, which will appear on all their notes and tomes.
 
 ## URL's
 
-```js
-  [front-end repository](https://github.com/upperlipholstery/blog-app-client)
-  [deployed application](https://upperlipholstery.github.io/blog-app-client/)
-```
+[front-end repository](https://github.com/upperlipholstery/blog-app-client)
+[deployed application](https://upperlipholstery.github.io/blog-app-client/)  
 
 ## API End Points
 
