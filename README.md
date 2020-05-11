@@ -6,13 +6,13 @@ An API built for use with <blog-app-client> Blog Application utilizing the follo
 *Mongoose
 *MongoDB
 
-This API is built to be used as the back-end for a blog application. It allows bloggers to register as users of the API and post their own blogs as well as comment on blogs owned by other users.
+This API is built to be used as the back-end for a blog application. It allows tomes to be registered by users of the API and write their own tomes as well as leave notes for other users. Users can also archive or like tomes, archive adds to their archived tomes list while like records the number of likes on a tome. Personal bios allow users to leave a short description of themselves, see their own or other users' stats, and upload an avatar, which will appear on all their notes and tomes.
 
 ## URL's
 
 ```js
-  front-end Application: ''
-  production: ''
+  [front-end repository](https://github.com/upperlipholstery/blog-app-client)
+  [deployed application](https://upperlipholstery.github.io/blog-app-client/)
 ```
 
 ## API End Points
@@ -23,15 +23,30 @@ This API is built to be used as the back-end for a blog application. It allows b
 | POST   | `/sign-in`             |
 | DELETE | `/sign-out`            |
 | PATCH  | `/change-password`     |
-| GET    | `/posts`               |
-| POST   | `/posts`               |
-| GET    | `/posts/:id`           |
-| PATCH  | `/posts/:id`           |
-| DELETE | `/posts/:id`           |
+| GET    | `/users/:id`           |
+| PATCH  | `/user_bio`            |
+| GET    | `/tomes`               |
+| POST   | `/tomes`               |
+| GET    | `/tomes/:id`           |
+| PATCH  | `/tomes/:id`           |
+| DELETE | `/tomes/:id`           |
+| GET    | `/notes`               |
+| POST   | `/notes`               |
+| GET    | `/notes/:id`           |
+| PATCH  | `/notes/:id`           |
+| DELETE | `/notes/:id`           |
+| GET    | `/favorites/:id`       |
+| POST   | `/favorites`           |
+| GET    | `/likes/:id`           |
+| POST   | `/likes`               |
+| GET    | `/uploads`             |
+| POST   | `/uploads`             |
+| PATCH  | `/uploads`             |
+| DELETE | `/uploads`             |
 
 
-## Goals for V2
-*add the abitlity to start a discussion by adding additional comments on to existing comments.
+## Goals for V3
+*add the abitlity to start a discussion by replying to an individual note.
 
 
 ## Development
@@ -40,4 +55,4 @@ This API is built to be used as the back-end for a blog application. It allows b
 
 ## Entity Relationship Diagram
 
-![ERD for Blog](./BLOG_ERD.png)
+[ERD for Tome](./BLOG_ERD.png)
