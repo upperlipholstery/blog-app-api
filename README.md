@@ -9,8 +9,8 @@ This API is built to be used as the back-end for a blog application. It allows t
 
 ## URL's
 
-[Front-End Repository](https://github.com/upperlipholstery/blog-app-client)
-[Deployed Application](https://upperlipholstery.github.io/blog-app-client/)  
+[Front-End Repository](https://github.com/upperlipholstery/blog-app-client)  
+[Deployed Application](https://upperlipholstery.github.io/blog-app-client/)
 
 ## API End Points
 
